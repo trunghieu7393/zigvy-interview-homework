@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Task } from 'src/entities/tasks/task.entity';
+import { Task } from 'src/task/entities/task.entity';
 import { Exclude } from 'class-transformer';
 import { Plan } from 'src/constants/types';
 
@@ -7,6 +7,9 @@ import { Plan } from 'src/constants/types';
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  userName: string;
 
   @Column()
   firstName: string;
