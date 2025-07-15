@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { postgresConfig } from './config/postgres.config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { postgresConfig } from './config/postgres.config';
       useFactory: postgresConfig,
       inject: [ConfigService],
     }),
+    AuthModule,
     // TODO adding task module
     // TODO adding user module
     // TODO adding auth module
