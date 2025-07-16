@@ -1,7 +1,7 @@
 export enum TaskStatus {
-  todo = 'To Do',
-  progress = 'In Progress',
-  done = 'Done',
+  TODO = 'To Do',
+  PROGRESS = 'In Progress',
+  DONE = 'Done',
 }
 
 export enum Plan {
