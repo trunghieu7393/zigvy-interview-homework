@@ -4,4 +4,7 @@ export enum TaskStatus {
   done = 'Done',
 }
 
-export type Plan = 'free' | 'premium';
+export enum Plan {
+  FREE = 'free',
+  PREMIUM = 'premium',
+}

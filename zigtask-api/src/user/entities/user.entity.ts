@@ -9,9 +9,6 @@ export class User {
   id: number;
 
   @Column()
-  userName: string;
-
-  @Column()
   firstName: string;
 
   @Column()
@@ -24,7 +21,7 @@ export class User {
   @Exclude()
   password: string;
 
-  @Column({ default: 'free' })
+  @Column({ default: Plan.FREE })
   plan: Plan;
 
   @OneToMany(() => Task, (task) => task.user)
@@ -36,6 +33,7 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @UpdateDateColumn()
-  upgradePlanAt: Date;
+  // update when user upgrade plan
+  @Column({ type: 'timestamp', nullable: true })
+  upgradedAt: Date | null;
 }

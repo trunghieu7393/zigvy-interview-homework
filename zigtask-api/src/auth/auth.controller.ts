@@ -1,34 +1,59 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { SignInDto } from './dto/signin.dto';
 import { SignUpDto } from './dto/signup.dto';
+import { SignInDto } from './dto/signin.dto';
 
+@ApiTags('Authentication')
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() signInDto: SignInDto) {
-    return this.authService.create(signInDto);
+  @Post('signup')
+  @ApiOperation({ summary: 'User registration' })
+  @ApiResponse({
+    status: 200,
+    description: 'User successfully registered',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'User with this email already exists',
+  })
+  async signUp(@Body() signUpDto: SignUpDto) {
+    const result = await this.authService.signUp(signUpDto);
+    return {
+      message: 'User registered successfully',
+      user: result.user,
+      token: result.token,
+    };
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() signUpDto: SignUpDto) {
-    return this.authService.update(+id, signUpDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @Post('signin')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'User login' })
+  @ApiResponse({
+    status: 200,
+    description: 'User successfully logged in',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Invalid credentials',
+  })
+  async signIn(@Body() signInDto: SignInDto) {
+    const result = await this.authService.signIn(signInDto);
+    return {
+      message: 'User logged in successfully',
+      user: result.user,
+      token: result.token,
+    };
   }
 }
