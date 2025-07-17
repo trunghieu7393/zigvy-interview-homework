@@ -3,19 +3,32 @@
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { TaskCard } from './TaskCard'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { useTaskStore } from '@/store/taskStore'
 
 export default function TaskBoard() {
-  const [tasks, setTasks] = useState<any[]>([])
+  const tasks = useTaskStore((state) => state.tasks)
+  console.log("🚀 ~ TaskBoard ~ tasks:", tasks)
+  const setTasks = useTaskStore((state) => state.setTasks)
+  const handleSync = async () => {
+    try {
+      const res = await fetch('/api/tasks/sync', { method: 'GET' })
+      if (!res.ok) throw new Error('Sync failed')
 
+        const tasks = await res.json()
+        useTaskStore.getState().setTasks(tasks)
+      
+    } catch (e) {
+    }
+  }
   useEffect(() => {
-    fetch('/api/tasks')
-      .then((res) => res.json())
-      .then((data) => setTasks(data))
-  }, [])
+    handleSync()
+  }, [setTasks])
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event
+    console.log("🚀 ~ handleDragEnd ~ over:", over)
+    console.log("🚀 ~ handleDragEnd ~ active:", active)
 
     if (!over || active.id === over.id) return
 
@@ -27,33 +40,27 @@ export default function TaskBoard() {
     const updatedTasks = tasks.map((task) =>
       task.id === active.id ? { ...task, status: newStatus } : task
     )
+    console.log("🚀 ~ handleDragEnd ~ updatedTasks:", updatedTasks)
 
     setTasks(updatedTasks)
 
-    // Gửi cập nhật lên server
-    fetch('/api/tasks/update', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ taskId: active.id, status: newStatus }),
-    })
+    // fetch('/api/tasks/update', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ taskId: active.id, status: newStatus }),
+    // })
   }
 
   const tasksByColumn = {
-    todo: tasks.filter((t) => t.status === 'todo'),
-    inprogress: tasks.filter((t) => t.status === 'inprogress'),
-    done: tasks.filter((t) => t.status === 'done'),
-  }
-
-  const refreshTasks = () => {
-    fetch('/api/tasks')
-      .then((res) => res.json())
-      .then((data) => setTasks(data))
+    'To Do': tasks.filter((t) => t.status === 'To Do'),
+    'In Progress': tasks.filter((t) => t.status === 'In Progress'),
+    'Done': tasks.filter((t) => t.status === 'Done'),
   }
 
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <div className="grid grid-cols-3 gap-4 p-4">
-        {(['todo', 'inprogress', 'done'] as const).map((column) => (
+        {(['To Do', 'In Progress', 'Done'] as const).map((column) => (
           <div key={column} className="bg-gray-100 p-4 rounded">
             <h3 className="capitalize font-semibold mb-2">{column}</h3>
             <SortableContext

@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
+import { sync as syncTasks } from '@/actions/taskActions'
+import { useTaskStore } from '@/store/taskStore'
+import { create as createTask } from '@/actions/taskActions'
 
 export default function CreateTaskModal({ onTaskCreated }: { onTaskCreated?: () => void }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -13,11 +16,7 @@ export default function CreateTaskModal({ onTaskCreated }: { onTaskCreated?: () 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const res = await fetch('/api/tasks', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, description, due }),
-    })
+    const res = await createTask({ title, description, due })
 
     if (res.ok) {
       setTitle('')
@@ -25,6 +24,9 @@ export default function CreateTaskModal({ onTaskCreated }: { onTaskCreated?: () 
       setDue('')
       setIsOpen(false)
       if (onTaskCreated) onTaskCreated()
+
+      const tasks = await syncTasks()
+      useTaskStore.getState().setTasks(tasks)
     }
   }
 

@@ -1,6 +1,7 @@
 'use client'
-
 import { useState } from 'react'
+import { useTaskStore } from '@/store/taskStore'
+import { sync as syncTasks } from '@/actions/taskActions'
 
 export default function SyncTask() {
   const [loading, setLoading] = useState(false)
@@ -8,8 +9,8 @@ export default function SyncTask() {
   const handleSync = async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/tasks/sync', { method: 'GET' })
-      if (!res.ok) throw new Error('Sync failed')
+        const tasks = await syncTasks()
+        useTaskStore.getState().setTasks(tasks)
     } catch (e) {
     } finally {
       setLoading(false)
