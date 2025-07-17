@@ -19,11 +19,12 @@ export async function create({ title, description, due }: { title: string; descr
   return res
 }
 
-export async function update({ id, status }: { id: number; status: string }) {
+export async function update({ id, title, status }: { id: number; title: string; status: string }) {
+  console.log(`🚀 ~ update ~ { id, title, status }:`, { id, title, status })
   const res = await fetch('/api/tasks', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, status }),
+      body: JSON.stringify({ id, title, status }),
     })
 
   if (!res.ok) throw new Error('Change status failed')

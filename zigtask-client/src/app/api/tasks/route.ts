@@ -29,6 +29,26 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// export async function GET() {
-//   return Response.json(tasks)
-// }
+export async function PATCH(req: NextRequest) {
+  const body = await req.json()
+
+    try {
+    const token = req.cookies.get('token')?.value;
+    const response = await axios.post(
+      'http://localhost:5000/tasks',
+      body,
+      {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      }
+    );
+
+    return Response.json(response.data)
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error?.response?.data || 'Internal Server Error' },
+      { status: error?.response?.status || 500 }
+    );
+  }
+}

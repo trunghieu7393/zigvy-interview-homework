@@ -5,6 +5,7 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-ki
 import { TaskCard } from './TaskCard'
 import { useEffect } from 'react'
 import { useTaskStore } from '@/store/taskStore'
+import { update as updateTask } from '@/actions/taskActions'
 
 export default function TaskBoard() {
   const tasks = useTaskStore((state) => state.tasks)
@@ -25,24 +26,25 @@ export default function TaskBoard() {
     handleSync()
   }, [setTasks])
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = async (event: any) => {
     const { active, over } = event
     console.log("🚀 ~ handleDragEnd ~ over:", over)
     console.log("🚀 ~ handleDragEnd ~ active:", active)
 
     if (!over || active.id === over.id) return
+    const task = tasks.find((t) => t.id === active.id)
 
-    const oldStatus = tasks.find((t) => t.id === active.id)?.status
-    const newStatus = over.id
+    const oldStatus = task?.status
+    const newStatus = over.status
 
     if (oldStatus === newStatus) return
 
-    const updatedTasks = tasks.map((task) =>
-      task.id === active.id ? { ...task, status: newStatus } : task
-    )
-    console.log("🚀 ~ handleDragEnd ~ updatedTasks:", updatedTasks)
-
-    setTasks(updatedTasks)
+    // const updatedTasks = tasks.map((task) =>
+    //   task.id === active.id ? { ...task, status: newStatus } : task
+    // )
+    // console.log("🚀 ~ handleDragEnd ~ updatedTasks:", updatedTasks)
+    const result = await updateTask({ id: task.id, title: task.title, status: newStatus })
+    // setTasks(updatedTasks)
 
     // fetch('/api/tasks/update', {
     //   method: 'POST',
