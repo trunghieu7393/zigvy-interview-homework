@@ -1,10 +1,19 @@
-import { NextRequest } from 'next/server'
+import axios from 'axios';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json()
-  debugger
+  try {
+    const response = await axios.post('http://localhost:5000/auth/signup', {
+      email,
+      password,
+    });
 
-  const token = Buffer.from(`${email}:${Date.now()}`).toString('base64')
-
-  return Response.json({ token:'asdasdsa' })
-}
+    return NextResponse.json(response.data)
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error?.response?.data || 'Internal Server Error' },
+      { status: error?.response?.status || 500 }
+    );
+  }
+};

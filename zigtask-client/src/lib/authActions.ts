@@ -7,6 +7,7 @@ export async function signIn(email: string, password: string) {
 
   if (!res.ok) throw new Error('Sign in failed')
   const data = await res.json()
+  console.log("🚀 ~ signIn ~ data:", data)
   document.cookie = `token=${data.token}; path=/`
   window.location.href = '/dashboard'
 }
