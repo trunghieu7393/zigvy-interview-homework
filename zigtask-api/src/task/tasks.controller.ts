@@ -23,6 +23,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { TaskStatus } from 'src/constants/types';
 import { User } from 'src/user/entities/user.entity';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 interface AuthenticatedRequest extends Request {
   user: User;
@@ -67,8 +68,15 @@ export class TasksController {
     return this.tasksService.getByStatus(req.user);
   }
 
-  // TODO
-  // get by id
-  // update by id
-  // delete by id
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update a task' })
+  @ApiResponse({ status: 200, description: 'Task updated successfully' })
+  @ApiResponse({ status: 404, description: 'Task not found' })
+  update(
+    @Param('id') id: string,
+    @Body() updateTaskDto: UpdateTaskDto,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    return this.tasksService.update(id, updateTaskDto, req.user);
+  }
 } 

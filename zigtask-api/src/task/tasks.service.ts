@@ -5,6 +5,7 @@ import { Task } from './entities/task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TaskStatus } from 'src/constants/types';
 import { User } from 'src/user/entities/user.entity';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -90,8 +91,40 @@ export class TasksService {
     }
   }
 
-  // TODO
-  // get by id
-  // update by id
-  // delete by id
+    async findOne(id: string, user: User): Promise<Task> {
+    try {
+      const task = await this.taskRepository.findOne({
+        where: { id: Number(id), userId: user.id },
+      });
+
+      if (!task) {
+        throw new NotFoundException('Task not found');
+      }
+
+      return task;
+    } catch (error) {
+      this.logger.error(`Failed to find task ${id} for user ${user.id}:`, error instanceof Error ? error.message : 'Unknown error');
+      throw error;
+    }
+  }
+
+  async update(id: string, updateTaskDto: UpdateTaskDto, user: User): Promise<Task> {
+    try {
+      const task = await this.findOne(id, user);
+
+      const updateData: Partial<Task> = {
+        ...updateTaskDto,
+        dueDate: updateTaskDto.dueDate ? new Date(updateTaskDto.dueDate) : task.dueDate,
+      };
+
+      await this.taskRepository.update(id, updateData);
+      const updatedTask = await this.findOne(id, user);
+
+      this.logger.log(`Task updated: ${updatedTask.id} by user: ${user.id}`);
+      return updatedTask;
+    } catch (error) {
+      this.logger.error(`Failed to update task ${id} for user ${user.id}:`, error instanceof Error ? error.message : 'Unknown error');
+      throw error;
+    }
+  }
 }
