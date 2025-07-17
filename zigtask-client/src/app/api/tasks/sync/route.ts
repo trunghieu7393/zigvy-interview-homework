@@ -1,18 +1,11 @@
 import axios from 'axios'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function POST(req: NextRequest) {
-  const body = await req.json()
-  const newTask = {
-    id: Math.random().toString(36).substring(2, 9),
-    ...body,
-  }
-
-    try {
+export async function GET(req: NextRequest) {
+  try {
     const token = req.cookies.get('token')?.value;
-    const response = await axios.post(
+    const response = await axios.get(
       'http://localhost:5000/tasks',
-      newTask,
       {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -28,7 +21,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
-// export async function GET() {
-//   return Response.json(tasks)
-// }

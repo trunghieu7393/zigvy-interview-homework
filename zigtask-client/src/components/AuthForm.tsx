@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn, signUp } from '@/lib/authActions'
+import { signIn, signUp } from '@/actions/authActions'
 
 export default function AuthForm({ isLogin = true }) {
   const [email, setEmail] = useState('')

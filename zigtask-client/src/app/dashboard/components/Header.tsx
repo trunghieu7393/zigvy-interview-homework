@@ -3,6 +3,7 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import CreateTaskModal from './CreateTaskModal'
+import SyncTask from './SyncTask'
 
 export default function Header() {
   const handleLogout = () => {
@@ -15,7 +16,8 @@ export default function Header() {
       <h1 className="text-xl font-bold">Task Dashboard</h1>
 
       <div className="flex items-center">
-        <CreateTaskModal />
+          <CreateTaskModal />
+          <SyncTask />
 
         <Menu as="div" className="relative inline-block text-left ml-4">
           <Menu.Button className="inline-flex w-full justify-center rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none">
