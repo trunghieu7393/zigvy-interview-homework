@@ -1,12 +1,24 @@
+'use client'
+import { useState } from 'react'
 import AuthForm from '@/components/AuthForm'
 
 export default function Home() {
+  const [isLogin, setIsLogin] = useState(true)
+
+  const handleToggle = () => setIsLogin((prev) => !prev)
+
   return (
     <div>
-      <AuthForm isLogin={true} />
+      <AuthForm isLogin={isLogin} />
       <div className="mt-4 text-center">
-        <p>Don't have an account?</p>
-        <a href="#" className="text-blue-500 underline">Sign Up</a>
+        <p>{isLogin ? "Don't have an account?" : "Already have an account?"}</p>
+        <button
+          type="button"
+          className="text-blue-500 underline"
+          onClick={handleToggle}
+        >
+          {isLogin ? "Sign Up" : "Sign In"}
+        </button>
       </div>
     </div>
   )
