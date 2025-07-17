@@ -18,3 +18,14 @@ export async function create({ title, description, due }: { title: string; descr
   if (!res.ok) throw new Error('Sync failed')
   return res
 }
+
+export async function update({ id, status }: { id: number; status: string }) {
+  const res = await fetch('/api/tasks', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status }),
+    })
+
+  if (!res.ok) throw new Error('Change status failed')
+  return res
+}
